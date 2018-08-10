@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS invoice_numbers;
 ###
 CREATE TABLE IF NOT EXISTS invoice_ids (
 	company_id SMALLINT UNSIGNED NOT NULL COMMENT 'The company identifier',
+	customer_id INT UNSIGNED NOT NULL COMMENT 'The customer identifier',
 	invoice_id BIGINT UNSIGNED NOT NULL COMMENT 'The last inserted invoice identifier',
 	CONSTRAINT invoice_ids_pk PRIMARY KEY (company_id)
 )
@@ -24,16 +25,16 @@ COMMENT='Table that hold the last inserted invoice ID per company' ;
 ###
 CREATE TABLE IF NOT EXISTS invoices (
 	company_id SMALLINT UNSIGNED NOT NULL COMMENT 'The owner of this invoice',
+	customer_id INT UNSIGNED NOT NULL COMMENT 'The customer identifier.',
 	invoice_id BIGINT UNSIGNED NOT NULL COMMENT 'The identifier of the invoice',
 	invoice_prefix char(5) NULL COMMENT 'The invoice prefix of the series',
 	invoice_number INT UNSIGNED NULL COMMENT 'The invoice number.',
 	invoice_issued_date DATETIME NULL COMMENT 'The issue date of the invoice',
-	customer_id BIGINT UNSIGNED NOT NULL COMMENT 'The customer identifier.',
 	created_at DATETIME NOT NULL COMMENT 'The date and time when the invoice was created',
 	created_by varchar(100) NOT NULL COMMENT 'The user that created this invoice.',
 	modified_at DATETIME NULL COMMENT 'The date and time when the invoice was last modified',
 	modified_by varchar(100) NULL COMMENT 'The user that last modified the invoice',
-	CONSTRAINT invoices_pk PRIMARY KEY (company_id,invoice_id)
+	CONSTRAINT invoices_pk PRIMARY KEY (company_id,customer_id,invoice_id)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8

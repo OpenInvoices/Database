@@ -1,21 +1,22 @@
 ###
 ### Drops
 ###
+DROP TABLE if exists invoice_series;
 DROP TABLE if exists invoice_numbers;
 
 ###
 ### Invoice series
 ###
-CREATE TABLE invoices.invoice_series (
-	company_id INT NOT NULL,
-	invoice_prefix char(5) NOT NULL,
-	start_date DATE NOT NULL,
-	end_date DATE DEFAULT NULL NULL
+CREATE TABLE IF NOT EXISTS invoice_series(
+	company_id INT UNSIGNED NOT NULL,
+	invoice_prefix CHAR(5) NOT NULL,
+	created_at DATETIME NOT NULL,
+	modified_at DATETIME NULL,
+	CONSTRAINT invoice_series_pk PRIMARY KEY (company_id,invoice_prefix)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
 COLLATE=utf8_general_ci ;
-
 
 ###
 ### Invoice numbers

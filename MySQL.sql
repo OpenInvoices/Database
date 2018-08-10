@@ -69,11 +69,44 @@ COLLATE=utf8_general_ci
 COMMENT='The last invoice IDs per series' ;
 
 ###
-### Stored procedure for invoice_id
+### Stored procedure to insert an invoice
 ###
 DROP PROCEDURE if exists spInvoiceInsert;
 
-CREATE PROCEDURE spInvoiceInsert(IN companyId SMALLINT UNSIGNED, IN invoicePrefix CHAR(5))
+CREATE PROCEDURE spInvoiceInsert(IN companyId SMALLINT UNSIGNED,IN customerId INT UNSIGNED, IN userName VARCHAR(100))
+BEGIN
+	
+	DECLARE myInvoiceId bigint unsigned;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	BEGIN
+		rollback;
+		SELECT 0 AS invoice_id;
+	END;
+
+	SELECT invoice_id INTO myInvoiceId FROM invoice_ids WHERE company_id=companyId AND customer_id=customerId;
+	
+	SET myInvoiceId = IFNULL(myInvoiceId, 0);
+
+	SET myInvoiceId = myInvoiceId + 1;
+
+	START TRANSACTION;
+
+		INSERT INTO invoice_ids (company_id, customer_id, invoice_id) VALUES(companyId, customerId, myInvoiceId) ON DUPLICATE KEY UPDATE invoice_id=myInvoiceId;
+
+		INSERT INTO invoices (company_id, customer_id, invoice_id, created_at, created_by) VALUES(companyId, customerId, myInvoiceId, NOW(), userName);
+	
+	COMMIT;
+
+	SELECT myInvoiceId AS invoice_id;
+END
+
+###
+### Stored procedure for invoice_id
+###
+DROP PROCEDURE if exists spHistoricalInvoiceInsert;
+
+CREATE PROCEDURE spHistoricalInvoiceInsert(IN companyId SMALLINT UNSIGNED, IN invoicePrefix CHAR(5))
 BEGIN
 	
 	DECLARE myInvoiceNumber int unsigned;

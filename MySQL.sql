@@ -1,11 +1,11 @@
----
---- Drops
----
-DROP TABLE invoice_numbers;
+###
+### Drops
+###
+DROP TABLE if exists invoice_numbers;
 
----
---- Invoice numbers
----
+###
+### Invoice numbers
+###
 CREATE TABLE IF NOT EXISTS invoice_numbers (
     company_id INT unsigned not null COMMENT 'The company registered with this invoice.',
     invoice_prefix char(5) NOT NULL COMMENT 'The invoice series prefix',
@@ -17,19 +17,19 @@ DEFAULT CHARSET=utf8
 COLLATE=utf8_general_ci
 COMMENT='The last invoice IDs per series' ;
 
----
---- Stored procedure for invoice_id
----
+###
+### Stored procedure for invoice_id
+###
 DROP PROCEDURE if exists spInvoiceInsert;
 
 CREATE PROCEDURE spInvoiceInsert(in companyId int unsigned, invoicePrefix char(5))
 BEGIN
 	
-	declare myInvoiceNumber int unsigned;
+	DECLARE myInvoiceNumber int unsigned;
 	
 	SELECT invoice_number INTO myInvoiceNumber FROM invoice_numbers WHERE company_id=companyId AND invoice_prefix=invoicePrefix;
 	
-	SET myInvoiceId = IFNULL(myInvoiceNumber, 0);
+	SET myInvoiceNumber = IFNULL(myInvoiceNumber, 0);
 
 	SET myInvoiceNumber = myInvoiceNumber + 1;
 
